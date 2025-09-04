@@ -1,0 +1,19 @@
+name: Deploy to UAT
+
+on:
+  push:
+    branches:
+      - uat
+
+jobs:
+  run-dbt-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger dbt Cloud Job
+        run: |
+          curl -X POST \
+            -H "Authorization: Token ${{ secrets.DBT_CLOUD_SERVICE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"cause": "GitHub UAT CI/CD trigger"}' \
+            https://cloud.getdbt.com/api/v2/accounts/${{ secrets.DBT_CLOUD_ACCOUNT_ID }}/jobs/${{ secrets.DBT_CLOUD_JOB_ID_QA }}/run/
+
